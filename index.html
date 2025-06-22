@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Crazy Spinning Cat</title>
+  <title>Spinning Cat</title>
   <style>
     html, body {
       margin: 0;
@@ -21,30 +21,6 @@
       position: absolute;
       cursor: pointer;
       transform: translate(-50%, -50%);
-    }
-
-    #popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      display: none;
-      z-index: 999;
-      text-align: center;
-    }
-
-    #popup button {
-      margin: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      background-color: #333;
-      color: white;
-      cursor: pointer;
     }
 
     #controls {
@@ -76,17 +52,11 @@
 </head>
 <body>
 
-<div id="cat" onclick="showPopup()"></div>
-
-<div id="popup">
-  <h2>hi zeridaddy</h2>
-  <button onclick="agree()">agree</button>
-  <button onclick="closePopup()">close</button>
-</div>
+<div id="cat"></div>
 
 <div id="controls">
-  <button onclick="pauseMovement()">Pause</button>
-  <button onclick="resumeMovement()">Play</button>
+  <button onclick="pauseEverything()">Pause</button>
+  <button onclick="resumeEverything()">Play</button>
 </div>
 
 <canvas id="confettiCanvas"></canvas>
@@ -97,107 +67,125 @@
   let frameIndex = 0;
   let x = window.innerWidth / 2;
   let y = window.innerHeight / 2;
-  let vx = Math.random() * 20 + 10; // big bounces
+  let vx = Math.random() * 20 + 10;
   let vy = Math.random() * 20 + 10;
   let angle = 0;
-  let rotationSpeed = 30;
-  let moving = true;
+  let tilt = 0;
+  let running = true;
 
+  // Load frames
   function spinCat() {
-    if (moving) {
+    if (running) {
       cat.style.backgroundImage = `url('${frames[frameIndex]}')`;
       frameIndex = (frameIndex + 1) % frames.length;
     }
-    setTimeout(spinCat, 30); // fast illusion
+    setTimeout(spinCat, 60); // slightly slower than before
   }
 
+  // Movement + tilt
   function moveCat() {
-    if (moving) {
+    if (running) {
       x += vx;
       y += vy;
       angle += Math.random() * 40 - 20;
+      tilt += Math.random() * 20 - 10;
 
       if (x <= 0 || x >= window.innerWidth - 250) vx *= -1;
       if (y <= 0 || y >= window.innerHeight - 250) vy *= -1;
 
       cat.style.left = `${x}px`;
       cat.style.top = `${y}px`;
-      cat.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+      cat.style.transform = `translate(-50%, -50%) rotate(${angle}deg) skew(${tilt}deg)`;
     }
-
     requestAnimationFrame(moveCat);
   }
 
-  function pauseMovement() {
-    moving = false;
+  // Pause + Resume
+  function pauseEverything() {
+    running = false;
   }
 
-  function resumeMovement() {
-    moving = true;
+  function resumeEverything() {
+    running = true;
   }
 
-  function showPopup() {
-    document.getElementById("popup").style.display = "block";
-  }
+  // Confetti
+  function showConfetti() {
+    const duration = 1 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 999 };
 
-  function closePopup() {
-    document.getElementById("popup").style.display = "none";
-  }
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
 
-  function agree() {
-    closePopup();
-    launchConfetti();
-  }
+    const interval = setInterval(function () {
+      const timeLeft = animationEnd - Date.now();
 
-  // 🎉 Confetti Logic
-  const canvas = document.getElementById("confettiCanvas");
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
 
-  const confetti = [];
-
-  function launchConfetti() {
-    for (let i = 0; i < 200; i++) {
-      confetti.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height - 200,
-        r: Math.random() * 6 + 4,
-        d: Math.random() * 10 + 10,
-        color: `hsl(${Math.random() * 360}, 100%, 70%)`,
-        tilt: Math.random() * 10 - 5,
-        tiltAngleIncremental: Math.random() * 0.07 + 0.05,
-        tiltAngle: 0
+      confetti({
+        particleCount: 50,
+        angle: randomInRange(55, 125),
+        spread: 360,
+        origin: { x: Math.random(), y: Math.random() }
       });
-    }
-
-    animateConfetti();
-    setTimeout(() => confetti.length = 0, 3000);
+    }, 100);
   }
 
-  function animateConfetti() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Attach confetti to cat click
+  cat.addEventListener("click", showConfetti);
 
-    for (let i = 0; i < confetti.length; i++) {
-      const c = confetti[i];
-      c.tiltAngle += c.tiltAngleIncremental;
-      c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2;
-      c.x += Math.sin(c.d);
-      c.tilt = Math.sin(c.tiltAngle - i / 3) * 15;
-
-      ctx.beginPath();
-      ctx.lineWidth = c.r;
-      ctx.strokeStyle = c.color;
-      ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
-      ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 2);
-      ctx.stroke();
-    }
-
-    if (confetti.length > 0) requestAnimationFrame(animateConfetti);
-  }
-
+  // Start
   spinCat();
   moveCat();
+
+  // Confetti lib (Canvas Confetti)
+  (function() {
+    var confetti = window.confetti = function() {
+      var count = 200;
+      var defaults = {
+        origin: { y: 0.7 }
+      };
+
+      function fire(particleRatio, opts) {
+        confettiLib(Object.assign({}, defaults, opts, {
+          particleCount: Math.floor(count * particleRatio)
+        }));
+      }
+
+      fire(0.25, {
+        spread: 26,
+        startVelocity: 55,
+      });
+      fire(0.2, {
+        spread: 60,
+      });
+      fire(0.35, {
+        spread: 100,
+        decay: 0.91,
+        scalar: 0.8
+      });
+      fire(0.1, {
+        spread: 120,
+        startVelocity: 25,
+        decay: 0.92,
+        scalar: 1.2
+      });
+      fire(0.1, {
+        spread: 120,
+        startVelocity: 45,
+      });
+    };
+
+    // Load confetti script
+    var script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js';
+    script.onload = () => { window.confettiLib = window.confetti; };
+    document.head.appendChild(script);
+  })();
 </script>
 
 </body>
