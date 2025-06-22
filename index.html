@@ -89,8 +89,8 @@
 <div id="cat"></div>
 <button id="toggle-btn">⏸️</button>
 <div id="popup">
-  <h2>hi user</h2>
-  <button id="hello-btn">hello</button>
+  <h2>dear user, you just got hacked by the xyslsinahs07</h2>
+  <button id="hello-btn">accept your fate</button>
 </div>
 <canvas id="confettiCanvas"></canvas>
 
@@ -151,32 +151,39 @@
     pausedByPopup = false;
     running = true;
     toggleBtn.textContent = "⏸️";
-    launchConfetti();
-  });
-
-  function launchConfetti() {
-    const duration = 1000;
-    const end = Date.now() + duration;
-    const defaults = { spread: 360, ticks: 60, zIndex: 999 };
-
-    const interval = setInterval(() => {
-      if (Date.now() > end) return clearInterval(interval);
-      confetti(Object.assign({}, defaults, {
-        particleCount: 50,
-        origin: { x: Math.random(), y: Math.random() }
-      }));
-    }, 100);
-  }
-
+    
   spinCat();
   moveCat();
 
-  (function() {
-    const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js";
-    script.onload = () => { window.confetti = window.confetti || confetti; };
-    document.head.appendChild(script);
-  })();
+ function flashRedLights() {
+  const flash = document.createElement("div");
+  flash.style.position = "fixed";
+  flash.style.top = 0;
+  flash.style.left = 0;
+  flash.style.width = "100vw";
+  flash.style.height = "100vh";
+  flash.style.backgroundColor = "darkred";
+  flash.style.opacity = "0";
+  flash.style.zIndex = "9999";
+  flash.style.pointerEvents = "none";
+  flash.style.transition = "opacity 0.1s ease-in-out";
+  document.body.appendChild(flash);
+
+  let visible = false;
+  let flashes = 0;
+  const maxFlashes = 60 * 10; // 1 minute at 100ms per flash
+
+  const interval = setInterval(() => {
+    visible = !visible;
+    flash.style.opacity = visible ? "0.8" : "0";
+    flashes++;
+    if (flashes >= maxFlashes) {
+      clearInterval(interval);
+      flash.remove();
+    }
+  }, 100);
+}
+
 </script>
 
 </body>
