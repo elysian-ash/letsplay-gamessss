@@ -15,6 +15,17 @@
       color: lime;
     }
 
+    #heading {
+      position: fixed;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 24px;
+      color: white;
+      z-index: 20;
+      text-shadow: 0 0 5px red;
+    }
+
     #cat {
       width: 300px;
       height: 300px;
@@ -71,17 +82,16 @@
       color: lime;
     }
 
-    .pulse {
-      animation: pulse 0.3s infinite alternate;
+    .red-flash {
+      animation: redPulse 0.15s infinite alternate;
     }
 
-    @keyframes pulse {
-      from {
-        background-color: rgba(100, 0, 0, 0.6);
-      }
-      to {
-        background-color: rgba(255, 0, 0, 0.9);
-      }
+    @keyframes redPulse {
+      0% { background-color: rgba(60, 0, 0, 0.4); }
+      25% { background-color: rgba(130, 0, 0, 0.6); }
+      50% { background-color: rgba(90, 0, 0, 0.3); }
+      75% { background-color: rgba(180, 0, 0, 0.7); }
+      100% { background-color: rgba(70, 0, 0, 0.5); }
     }
 
     #whiteout {
@@ -103,6 +113,7 @@
 </head>
 <body>
 
+<div id="heading">Click the cat to play a game</div>
 <div id="cat"></div>
 <button id="toggle-btn">⏸️</button>
 
@@ -119,6 +130,7 @@
   const popup = document.getElementById("popup");
   const terminalText = document.getElementById("terminal-text");
   const whiteout = document.getElementById("whiteout");
+  const heading = document.getElementById("heading");
 
   const frames = ["cat-front.png", "cat-right.png", "cat-back.png", "cat-left.png"];
   let frameIndex = 0;
@@ -161,8 +173,9 @@
   cat.addEventListener("click", () => {
     running = false;
     popup.style.display = "block";
-    document.body.classList.add("pulse");
+    document.body.classList.add("red-flash");
     toggleBtn.textContent = "▶️";
+    heading.style.display = "none";
     startTerminalSequence();
   });
 
@@ -191,19 +204,19 @@
 
   function startWhiteoutSequence() {
     popup.style.display = "none";
-    document.body.classList.remove("pulse");
+    document.body.classList.remove("red-flash");
     whiteout.style.display = "block";
     startWhiteoutSpam();
   }
 
   function startWhiteoutSpam() {
-    const chars = "АБВГДЖЗИЙКЛΜΝΞΠΡΣΤΦΧΨΩ∀∂∑∆λβωЖ₽₪¢#@!%^&*()<>|~`{}[];:¿¡Ø╣☼§⌐≡±÷╚▄▀1234567890".split("");
+    const chars = "АБВГДЖЗИЙΚΛΜΝΞΠΡΣΤΦΧΨΩ∀∂∑∆λβωЖ₽₪¢#@!%^&*()<>|~`{}[];:¿¡Ø╣☼§⌐≡±÷╚▄▀1234567890".split("");
     const start = Date.now();
     const end = start + 10 * 60 * 1000; // 10 minutes
 
     function scrollSpam() {
       if (Date.now() > end) return;
-      const line = Array.from({length: 150}, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+      const line = Array.from({length: 160}, () => chars[Math.floor(Math.random() * chars.length)]).join("");
       whiteout.innerText += line + "\n";
       whiteout.scrollTop = whiteout.scrollHeight;
       requestAnimationFrame(scrollSpam);
