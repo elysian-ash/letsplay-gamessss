@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Floating Spinning Cat</title>
+  <title>Spinning Flying Cat</title>
   <style>
     html, body {
       margin: 0;
@@ -21,7 +21,7 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) rotate(0deg);
+      transform: translate(-50%, -50%);
       cursor: pointer;
     }
 
@@ -74,24 +74,32 @@
   ];
 
   let index = 0;
+  let x = window.innerWidth / 2;
+  let y = window.innerHeight / 2;
+  let vx = Math.random() * 4 + 2; // random speed x
+  let vy = Math.random() * 4 + 2; // random speed y
+  let angle = 0;
 
   function spinCat() {
     cat.style.backgroundImage = `url('${frames[index]}')`;
     index = (index + 1) % frames.length;
-    setTimeout(spinCat, 60); // very fast
+    setTimeout(spinCat, 45);
   }
 
-  function floatCat() {
-    const x = Math.random() * (window.innerWidth - 250);
-    const y = Math.random() * (window.innerHeight - 250);
-    const rotate = Math.random() * 360 - 180; // tilt -180 to 180 degrees
+  function moveCat() {
+    x += vx;
+    y += vy;
+    angle += Math.random() * 20 - 10; // random tilt for wobble
 
-    cat.style.transition = "top 0.3s linear, left 0.3s linear, transform 0.3s linear";
+    // bounce off edges
+    if (x <= 0 || x >= window.innerWidth - 250) vx *= -1;
+    if (y <= 0 || y >= window.innerHeight - 250) vy *= -1;
+
     cat.style.left = `${x}px`;
     cat.style.top = `${y}px`;
-    cat.style.transform = `translate(-50%, -50%) rotate(${rotate}deg)`;
+    cat.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
 
-    setTimeout(floatCat, 300); // moves every 300ms
+    requestAnimationFrame(moveCat);
   }
 
   function showPopup() {
@@ -108,7 +116,7 @@
   }
 
   spinCat();
-  floatCat();
+  moveCat();
 </script>
 
 </body>
