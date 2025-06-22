@@ -58,29 +58,39 @@
       z-index: 1000;
     }
 
-    #popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #111;
-      color: lime;
-      padding: 40px 60px;
-      font-size: 18px;
-      border-radius: 10px;
-      text-align: left;
-      box-shadow: 0 0 30px #ff0000;
-      display: none;
-      z-index: 999;
-      width: 400px;
-      height: auto;
-    }
+ #popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #000000;
+  color: #80ff80;
+  padding: 30px 40px;
+  font-size: 14px;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 10px #0f0;
+  display: none;
+  z-index: 999;
+  width: 450px;
+  height: auto;
+  text-shadow: 0 0 2px #0f0;
+}
 
-    #popup h2 {
-      font-size: 22px;
-      margin-bottom: 20px;
-      color: lime;
-    }
+#popup h2 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #39ff14;
+  text-shadow: 0 0 2px #39ff14;
+}
+
+#terminal-text {
+  white-space: pre-line;
+  line-height: 1.4;
+  font-size: 13px;
+}
+
 
     .red-flash {
       animation: redPulse 0.15s infinite alternate;
@@ -188,19 +198,38 @@
     "you have been hacked by the xyslsinahs07"
   ];
 
-  function startTerminalSequence() {
-    let index = 0;
-    terminalText.textContent = "";
-    const interval = setInterval(() => {
-      if (index >= messages.length) {
-        clearInterval(interval);
-        setTimeout(startWhiteoutSequence, 1000);
-        return;
+function startTerminalSequence() {
+  let index = 0;
+  terminalText.textContent = "";
+  const cursor = " █";
+  
+  function typeLine(line, callback) {
+    let i = 0;
+    const typeInterval = setInterval(() => {
+      if (i <= line.length) {
+        terminalText.textContent = terminalText.textContent.replace(cursor, "") + line.charAt(i++) + cursor;
+      } else {
+        clearInterval(typeInterval);
+        terminalText.textContent = terminalText.textContent.replace(cursor, "") + "\n";
+        callback();
       }
-      terminalText.textContent += messages[index] + "\n";
-      index++;
-    }, 2500);
+    }, 25); // adjust for typing speed
   }
+
+  function nextLine() {
+    if (index >= messages.length) {
+      setTimeout(startWhiteoutSequence, 500);
+      return;
+    }
+    typeLine(messages[index], () => {
+      index++;
+      setTimeout(nextLine, 100);
+    });
+  }
+
+  nextLine();
+}
+
 
   function startWhiteoutSequence() {
     popup.style.display = "none";
