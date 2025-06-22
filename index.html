@@ -12,6 +12,17 @@
       overflow: hidden;
       background: black;
       font-family: sans-serif;
+      color: white;
+    }
+
+    h1 {
+      position: fixed;
+      top: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 32px;
+      color: red;
+      z-index: 999;
     }
 
     #cat {
@@ -57,12 +68,13 @@
       text-align: center;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
       display: none;
-      z-index: 999;
+      z-index: 9999;
     }
 
     #popup h2 {
       margin-bottom: 20px;
       font-size: 22px;
+      color: black;
     }
 
     #hello-btn {
@@ -75,30 +87,38 @@
       cursor: pointer;
     }
 
-    canvas {
+    #flasher {
       position: fixed;
       top: 0;
       left: 0;
+      height: 100%;
+      width: 100%;
+      background: red;
+      opacity: 0;
+      z-index: 9998;
       pointer-events: none;
-      z-index: 998;
     }
   </style>
 </head>
 <body>
 
+<h1>click the cat hehe</h1>
 <div id="cat"></div>
 <button id="toggle-btn">⏸️</button>
+
 <div id="popup">
   <h2>dear user, you just got hacked by the xyslsinahs07</h2>
   <button id="hello-btn">accept your fate</button>
 </div>
-<canvas id="confettiCanvas"></canvas>
+
+<div id="flasher"></div>
 
 <script>
   const cat = document.getElementById("cat");
   const toggleBtn = document.getElementById("toggle-btn");
   const popup = document.getElementById("popup");
   const helloBtn = document.getElementById("hello-btn");
+  const flasher = document.getElementById("flasher");
 
   const frames = ["cat-front.png", "cat-right.png", "cat-back.png", "cat-left.png"];
   let frameIndex = 0;
@@ -108,7 +128,6 @@
   let vy = (Math.random() - 0.5) * 25;
   let angle = 0;
   let running = true;
-  let pausedByPopup = false;
 
   function spinCat() {
     if (running) {
@@ -140,50 +159,35 @@
   });
 
   cat.addEventListener("click", () => {
-    pausedByPopup = true;
     running = false;
     popup.style.display = "block";
     toggleBtn.textContent = "▶️";
+    startRedFlashes();
   });
 
   helloBtn.addEventListener("click", () => {
     popup.style.display = "none";
-    pausedByPopup = false;
     running = true;
     toggleBtn.textContent = "⏸️";
-    
+  });
+
+  function startRedFlashes() {
+    let flashing = true;
+    let count = 0;
+    const maxCount = 60 * 2; // 1 minute (60 sec × 2 flashes per sec)
+    const flashInterval = setInterval(() => {
+      flasher.style.opacity = flashing ? 0.7 : 0;
+      flashing = !flashing;
+      count++;
+      if (count >= maxCount) {
+        flasher.style.opacity = 0;
+        clearInterval(flashInterval);
+      }
+    }, 500); // Every 0.5s (2 flashes/sec)
+  }
+
   spinCat();
   moveCat();
-
- function flashRedLights() {
-  const flash = document.createElement("div");
-  flash.style.position = "fixed";
-  flash.style.top = 0;
-  flash.style.left = 0;
-  flash.style.width = "100vw";
-  flash.style.height = "100vh";
-  flash.style.backgroundColor = "darkred";
-  flash.style.opacity = "0";
-  flash.style.zIndex = "9999";
-  flash.style.pointerEvents = "none";
-  flash.style.transition = "opacity 0.1s ease-in-out";
-  document.body.appendChild(flash);
-
-  let visible = false;
-  let flashes = 0;
-  const maxFlashes = 60 * 10; // 1 minute at 100ms per flash
-
-  const interval = setInterval(() => {
-    visible = !visible;
-    flash.style.opacity = visible ? "0.8" : "0";
-    flashes++;
-    if (flashes >= maxFlashes) {
-      clearInterval(interval);
-      flash.remove();
-    }
-  }, 100);
-}
-
 </script>
 
 </body>
