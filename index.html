@@ -2,37 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Spinning Cat Hacker</title>
+  <title>Hacked Cat</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
+      height: 100%;
       background: black;
+      overflow: hidden;
       font-family: monospace;
+      color: #0f0;
     }
 
     h1 {
-      position: absolute;
+      position: fixed;
+      top: 10px;
       width: 100%;
       text-align: center;
-      top: 20px;
-      font-size: 2rem;
-      color: limegreen;
-      z-index: 1001;
-      text-shadow: 0 0 5px limegreen, 0 0 10px limegreen;
-      animation: glitch-text 0.3s infinite;
-    }
-
-    @keyframes glitch-text {
-      0% { transform: translateX(0); }
-      20% { transform: translateX(-1px); }
-      40% { transform: translateX(1px); }
-      60% { transform: translateX(-1px); }
-      80% { transform: translateX(1px); }
-      100% { transform: translateX(0); }
+      color: #0f0;
+      font-size: 24px;
+      z-index: 10;
+      text-shadow: 0 0 5px #0f0;
     }
 
     #cat {
@@ -48,49 +38,30 @@
       cursor: pointer;
     }
 
-    #toggle-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      z-index: 1000;
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    }
-
     #popup {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: #0f0f0f;
-      padding: 30px 40px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 0 20px limegreen;
-      color: limegreen;
-      font-family: monospace;
+      background: rgba(10, 20, 10, 0.95);
+      color: #00ff00;
+      padding: 40px;
+      border-radius: 10px;
       font-size: 18px;
+      text-align: center;
+      box-shadow: 0 0 10px #0f0, 0 0 30px #0f0;
       display: none;
-      z-index: 1002;
-      animation: glitch-popup 0.15s infinite alternate;
+      z-index: 999;
+      width: 300px;
     }
 
-    @keyframes glitch-popup {
-      0% { box-shadow: 0 0 10px limegreen; }
-      100% { box-shadow: 0 0 25px limegreen; }
+    .glitch {
+      text-shadow: 0 0 3px #0f0, 0 0 5px #0f0;
+      font-weight: bold;
+      font-size: 22px;
     }
 
-    #flashing {
+    #flasher {
       position: fixed;
       top: 0;
       left: 0;
@@ -98,15 +69,21 @@
       height: 100vh;
       background: red;
       opacity: 0;
-      z-index: 900;
       pointer-events: none;
-      animation: flash 0.1s infinite;
+      z-index: 998;
+      transition: opacity 0.05s ease-in-out;
     }
 
-    @keyframes flash {
-      0%   { opacity: 0; }
-      50%  { opacity: 0.7; }
-      100% { opacity: 0; }
+    .shake {
+      animation: shake 0.08s infinite;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(-10px, 8px); }
+      50% { transform: translate(12px, -10px); }
+      75% { transform: translate(-8px, -12px); }
+      100% { transform: translate(10px, 6px); }
     }
   </style>
 </head>
@@ -114,15 +91,14 @@
 
 <h1>click the cat hehe</h1>
 <div id="cat"></div>
-<button id="toggle-btn">⏸️</button>
-<div id="popup"><span id="popup-text">Loading...</span></div>
-<div id="flashing"></div>
+<div id="popup"><div class="glitch" id="popup-text">Loading...</div></div>
+<div id="flasher"></div>
 
 <script>
   const cat = document.getElementById("cat");
-  const toggleBtn = document.getElementById("toggle-btn");
   const popup = document.getElementById("popup");
   const popupText = document.getElementById("popup-text");
+  const flasher = document.getElementById("flasher");
 
   const frames = ["cat-front.png", "cat-right.png", "cat-back.png", "cat-left.png"];
   let frameIndex = 0;
@@ -157,38 +133,53 @@
     requestAnimationFrame(moveCat);
   }
 
-  toggleBtn.addEventListener("click", () => {
-    running = !running;
-    toggleBtn.textContent = running ? "⏸️" : "▶️";
-  });
+  function showPopupSequence() {
+    popup.style.display = "block";
+    document.body.classList.add("shake");
+    startFlashing();
+
+    const steps = [
+      "extracting google data",
+      "scraping web history",
+      "checking passwords",
+      "finishing",
+      "sending to the xyslsinahs07",
+      "YOU HAVE BEEN HACKED BY THE xyslsinahs07"
+    ];
+
+    let i = 0;
+    function nextStep() {
+      if (i < steps.length) {
+        popupText.textContent = steps[i];
+        i++;
+        setTimeout(nextStep, 2500);
+      } else {
+        setTimeout(() => {
+          popup.style.display = "none";
+          document.body.classList.remove("shake");
+        }, 30000);
+      }
+    }
+
+    nextStep();
+  }
+
+  function startFlashing() {
+    let flashes = 0;
+    const maxFlashes = 6000; // 10 minutes / 0.1s = 6000 cycles
+    const interval = setInterval(() => {
+      flasher.style.opacity = flasher.style.opacity === "1" ? "0" : "1";
+      flashes++;
+      if (flashes >= maxFlashes) {
+        clearInterval(interval);
+        flasher.style.opacity = 0;
+      }
+    }, 100);
+  }
 
   cat.addEventListener("click", () => {
     running = false;
-    toggleBtn.textContent = "▶️";
-    popup.style.display = "block";
-
-    // Start scary red flashing
-    document.getElementById("flashing").style.display = "block";
-
-    // Show fake loading sequence
-    popupText.innerText = "Extracting Google data...";
-    setTimeout(() => {
-      popupText.innerText = "Checking passwords...";
-    }, 3000);
-    setTimeout(() => {
-      popupText.innerText = "Finishing...";
-    }, 6000);
-    setTimeout(() => {
-      popupText.innerText = "you have been hacked by the xyslsinahs07";
-    }, 9000);
-
-    // Auto-close popup
-    setTimeout(() => {
-      popup.style.display = "none";
-      document.getElementById("flashing").style.display = "none";
-      running = true;
-      toggleBtn.textContent = "⏸️";
-    }, 30000);
+    showPopupSequence();
   });
 
   spinCat();
