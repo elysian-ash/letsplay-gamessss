@@ -107,7 +107,6 @@
   let vx = (Math.random() - 0.5) * 25;
   let vy = (Math.random() - 0.5) * 25;
   let angle = 0;
-  let tilt = 0;
   let running = true;
   let pausedByPopup = false;
 
@@ -124,14 +123,13 @@
       x += vx;
       y += vy;
       angle += Math.random() * 30 - 15;
-      tilt += Math.random() * 15 - 7;
 
       if (x <= 0 || x >= window.innerWidth - 150) vx *= -1;
       if (y <= 0 || y >= window.innerHeight - 150) vy *= -1;
 
       cat.style.left = `${x}px`;
       cat.style.top = `${y}px`;
-      cat.style.transform = `translate(-50%, -50%) rotate(${angle}deg) skew(${tilt}deg)`;
+      cat.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
     }
     requestAnimationFrame(moveCat);
   }
