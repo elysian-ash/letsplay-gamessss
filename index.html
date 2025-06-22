@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Hacked Cat</title>
+  <title>Hacked Cat Terminal</title>
   <style>
     html, body {
       margin: 0;
@@ -21,13 +21,14 @@
       text-align: center;
       color: #00ff00;
       font-size: 24px;
-      z-index: 10;
       text-shadow: 0 0 5px #0f0;
+      z-index: 10;
     }
 
     #cat {
-      width: 300px;
-      height: 300px;
+      width: 250px;
+      height: 250px;
+      background-image: url('https://i.imgur.com/JRbG8ZS.png');
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
@@ -43,165 +44,125 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(10, 20, 10, 0.95);
+      background-color: #010101;
       color: #00ff00;
+      border: 2px solid #00ff00;
       padding: 30px;
-      border-radius: 8px;
-      font-size: 16px;
-      box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+      font-size: 18px;
+      width: 400px;
+      height: 250px;
+      overflow-y: auto;
       display: none;
-      z-index: 1000;
-      width: 340px;
-      max-width: 90%;
-    }
-
-    .terminal-text {
-      font-family: 'Courier New', Courier, monospace;
-      white-space: pre-wrap;
-      line-height: 1.5;
-      text-shadow: 0 0 3px #00ff00;
-    }
-
-    #flasher {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: radial-gradient(rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0.4));
-      opacity: 0;
-      pointer-events: none;
+      white-space: pre-line;
+      text-shadow: 0 0 4px #0f0;
       z-index: 999;
-      transition: opacity 0.06s ease-in-out;
     }
 
-    .shake {
-      animation: shake 0.08s infinite;
+    .red-flash {
+      animation: redPulse 0.3s infinite;
+    }
+
+    @keyframes redPulse {
+      0% { background-color: rgba(50,0,0,0.4); }
+      50% { background-color: rgba(150,0,0,0.9); }
+      100% { background-color: rgba(50,0,0,0.4); }
     }
 
     @keyframes shake {
-      0% { transform: translate(0, 0); }
-      25% { transform: translate(-12px, 10px); }
-      50% { transform: translate(14px, -14px); }
-      75% { transform: translate(-10px, -16px); }
-      100% { transform: translate(12px, 8px); }
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-10px, 5px); }
+      40% { transform: translate(10px, -5px); }
+      60% { transform: translate(-15px, 10px); }
+      80% { transform: translate(15px, -10px); }
+    }
+
+    .shake {
+      animation: shake 0.1s infinite;
+    }
+
+    #finalHack {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      color: black;
+      font-size: 16px;
+      padding: 20px;
+      overflow: hidden;
+      display: none;
+      z-index: 1000;
+      font-family: monospace;
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
+  <h1>click the cat hehe</h1>
+  <div id="cat"></div>
+  <div id="popup"></div>
+  <div id="finalHack"></div>
 
-<h1>click the cat hehe</h1>
-<div id="cat"></div>
-<div id="popup"><div class="terminal-text" id="popup-text">_</div></div>
-<div id="flasher"></div>
+  <script>
+    const cat = document.getElementById("cat");
+    const popup = document.getElementById("popup");
+    const finalHack = document.getElementById("finalHack");
+    const body = document.body;
 
-<script>
-  const cat = document.getElementById("cat");
-  const popup = document.getElementById("popup");
-  const popupText = document.getElementById("popup-text");
-  const flasher = document.getElementById("flasher");
-
-  const frames = ["cat-front.png", "cat-right.png", "cat-back.png", "cat-left.png"];
-  let frameIndex = 0;
-  let x = window.innerWidth / 2;
-  let y = window.innerHeight / 2;
-  let vx = (Math.random() - 0.5) * 25;
-  let vy = (Math.random() - 0.5) * 25;
-  let angle = 0;
-  let running = true;
-
-  function spinCat() {
-    if (running) {
-      cat.style.backgroundImage = `url('${frames[frameIndex]}')`;
-      frameIndex = (frameIndex + 1) % frames.length;
-    }
-    setTimeout(spinCat, 100);
-  }
-
-  function moveCat() {
-    if (running) {
-      x += vx;
-      y += vy;
-      angle += Math.random() * 10 - 5;
-      if (x <= 0 || x >= window.innerWidth - 300) vx *= -1;
-      if (y <= 0 || y >= window.innerHeight - 300) vy *= -1;
-
-      cat.style.left = `${x}px`;
-      cat.style.top = `${y}px`;
-      cat.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
-    }
-    requestAnimationFrame(moveCat);
-  }
-
-  function showPopupSequence() {
-    popup.style.display = "block";
-    document.body.classList.add("shake");
-    startFlashing();
-
-    const steps = [
-      "extracting google data",
-      "scraping web history",
-      "checking passwords",
-      "finishing",
-      "sending to the xyslsinahs07",
-      "YOU HAVE BEEN HACKED BY THE xyslsinahs07"
+    const phrases = [
+      "extracting google data . . .",
+      "scraping web history . . .",
+      "проверка паролей . . .",
+      "checking passwords . . .",
+      "finishing . . .",
+      "sending to the xyslsinahs07 . . .",
+      "вы были взломаны . . .",
+      "you have been hacked by the xyslsinahs07"
     ];
 
-    let i = 0;
+    const finalChars = "ЖΨѪ⟟⧝⧊҂∑†≠Ω⚙⚠ΣλҖ⇌⇔⇐⊙⊗∆⟁➤◉◈▧▩☠☢⛓⛔█▓▒░#%&@!*".split("");
 
-    function typeEffect(text, callback) {
-      popupText.innerText = "";
-      let index = 0;
-      let typer = setInterval(() => {
-        if (index < text.length) {
-          popupText.innerText += text.charAt(index);
-          index++;
-        } else {
-          clearInterval(typer);
-          popupText.innerText += "\n";
-          callback();
-        }
-      }, 50);
-    }
+    cat.addEventListener("click", () => {
+      body.classList.add("red-flash", "shake");
+      popup.style.display = "block";
+      popup.innerHTML = "";
 
-    function nextStep() {
-      if (i < steps.length) {
-        typeEffect(steps[i], () => {
+      let i = 0;
+
+      function typeNext() {
+        if (i < phrases.length) {
+          popup.innerHTML += phrases[i] + "\n";
           i++;
-          setTimeout(nextStep, 2500);
-        });
-      } else {
-        setTimeout(() => {
-          popup.style.display = "none";
-          document.body.classList.remove("shake");
-        }, 30000);
+          setTimeout(typeNext, 1500); // ~1.5s per step
+        } else {
+          setTimeout(() => {
+            popup.style.display = "none";
+            body.classList.remove("red-flash", "shake");
+            startFinalHack();
+          }, 2000);
+        }
       }
+
+      typeNext();
+    });
+
+    function startFinalHack() {
+      finalHack.style.display = "block";
+      let content = "";
+
+      const spam = setInterval(() => {
+        const randChar = finalChars[Math.floor(Math.random() * finalChars.length)];
+        content += randChar + randChar + " ";
+        if (content.length > 10000) content = content.substring(1000); // keep performance stable
+        finalHack.innerText = content;
+      }, 10); // spam fast
+
+      // Optional: stop flood after 1 minute
+      setTimeout(() => {
+        clearInterval(spam);
+      }, 60000);
     }
-
-    nextStep();
-  }
-
-  function startFlashing() {
-    let flashes = 0;
-    const maxFlashes = 6000; // 10 minutes
-    const interval = setInterval(() => {
-      flasher.style.opacity = flasher.style.opacity === "1" ? "0" : "1";
-      flashes++;
-      if (flashes >= maxFlashes) {
-        clearInterval(interval);
-        flasher.style.opacity = 0;
-      }
-    }, 100);
-  }
-
-  cat.addEventListener("click", () => {
-    running = false;
-    showPopupSequence();
-  });
-
-  spinCat();
-  moveCat();
-</script>
-
+  </script>
 </body>
 </html>
