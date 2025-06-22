@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Spinning Cat Illusion</title>
+  <title>Spinning Floating Cat</title>
   <style>
     html, body {
       margin: 0;
@@ -20,6 +20,9 @@
       background-size: cover;
       background-position: center;
       position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       cursor: pointer;
     }
 
@@ -76,19 +79,17 @@
   function spinCat() {
     cat.style.backgroundImage = `url('${frames[index]}')`;
     index = (index + 1) % frames.length;
-    setTimeout(spinCat, 150); // smooth, visible spin
+    setTimeout(spinCat, 80); // FAST spin
   }
 
-  function moveCat() {
+  function floatCat() {
     const x = Math.random() * (window.innerWidth - 250);
     const y = Math.random() * (window.innerHeight - 250);
+    cat.style.transition = "top 0.4s linear, left 0.4s linear";
     cat.style.left = `${x}px`;
     cat.style.top = `${y}px`;
-    setTimeout(moveCat, 800); // cat teleports every 0.8s
+    setTimeout(floatCat, 400); // FAST floating
   }
-
-  spinCat();
-  moveCat();
 
   function showPopup() {
     document.getElementById("popup").style.display = "block";
@@ -102,6 +103,9 @@
     alert("you agreed, zeridaddy 😼");
     closePopup();
   }
+
+  spinCat();
+  floatCat();
 </script>
 
 </body>
