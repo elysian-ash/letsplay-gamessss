@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Spinning Cat</title>
+  <title>Spinning Cat Hacker</title>
   <style>
     html, body {
       margin: 0;
@@ -11,18 +11,28 @@
       width: 100vw;
       overflow: hidden;
       background: black;
-      font-family: sans-serif;
-      color: white;
+      font-family: monospace;
     }
 
     h1 {
-      position: fixed;
-      top: 10px;
+      position: absolute;
       width: 100%;
       text-align: center;
-      font-size: 32px;
-      color: red;
-      z-index: 999;
+      top: 20px;
+      font-size: 2rem;
+      color: limegreen;
+      z-index: 1001;
+      text-shadow: 0 0 5px limegreen, 0 0 10px limegreen;
+      animation: glitch-text 0.3s infinite;
+    }
+
+    @keyframes glitch-text {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-1px); }
+      40% { transform: translateX(1px); }
+      60% { transform: translateX(-1px); }
+      80% { transform: translateX(1px); }
+      100% { transform: translateX(0); }
     }
 
     #cat {
@@ -62,41 +72,41 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: white;
+      background: #0f0f0f;
       padding: 30px 40px;
       border-radius: 12px;
       text-align: center;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 20px limegreen;
+      color: limegreen;
+      font-family: monospace;
+      font-size: 18px;
       display: none;
-      z-index: 9999;
+      z-index: 1002;
+      animation: glitch-popup 0.15s infinite alternate;
     }
 
-    #popup h2 {
-      margin-bottom: 20px;
-      font-size: 22px;
-      color: black;
+    @keyframes glitch-popup {
+      0% { box-shadow: 0 0 10px limegreen; }
+      100% { box-shadow: 0 0 25px limegreen; }
     }
 
-    #hello-btn {
-      background: dodgerblue;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    #flasher {
+    #flashing {
       position: fixed;
       top: 0;
       left: 0;
-      height: 100%;
-      width: 100%;
+      width: 100vw;
+      height: 100vh;
       background: red;
       opacity: 0;
-      z-index: 9998;
+      z-index: 900;
       pointer-events: none;
+      animation: flash 0.1s infinite;
+    }
+
+    @keyframes flash {
+      0%   { opacity: 0; }
+      50%  { opacity: 0.7; }
+      100% { opacity: 0; }
     }
   </style>
 </head>
@@ -105,20 +115,14 @@
 <h1>click the cat hehe</h1>
 <div id="cat"></div>
 <button id="toggle-btn">⏸️</button>
-
-<div id="popup">
-  <h2>dear user, you just got hacked by the xyslsinahs07</h2>
-  <button id="hello-btn">accept your fate</button>
-</div>
-
-<div id="flasher"></div>
+<div id="popup"><span id="popup-text">Loading...</span></div>
+<div id="flashing"></div>
 
 <script>
   const cat = document.getElementById("cat");
   const toggleBtn = document.getElementById("toggle-btn");
   const popup = document.getElementById("popup");
-  const helloBtn = document.getElementById("hello-btn");
-  const flasher = document.getElementById("flasher");
+  const popupText = document.getElementById("popup-text");
 
   const frames = ["cat-front.png", "cat-right.png", "cat-back.png", "cat-left.png"];
   let frameIndex = 0;
@@ -160,31 +164,32 @@
 
   cat.addEventListener("click", () => {
     running = false;
-    popup.style.display = "block";
     toggleBtn.textContent = "▶️";
-    startRedFlashes();
-  });
+    popup.style.display = "block";
 
-  helloBtn.addEventListener("click", () => {
-    popup.style.display = "none";
-    running = true;
-    toggleBtn.textContent = "⏸️";
-  });
+    // Start scary red flashing
+    document.getElementById("flashing").style.display = "block";
 
-  function startRedFlashes() {
-    let flashing = true;
-    let count = 0;
-    const maxCount = 60 * 2; // 1 minute (60 sec × 2 flashes per sec)
-    const flashInterval = setInterval(() => {
-      flasher.style.opacity = flashing ? 0.7 : 0;
-      flashing = !flashing;
-      count++;
-      if (count >= maxCount) {
-        flasher.style.opacity = 0;
-        clearInterval(flashInterval);
-      }
-    }, 500); // Every 0.5s (2 flashes/sec)
-  }
+    // Show fake loading sequence
+    popupText.innerText = "Extracting Google data...";
+    setTimeout(() => {
+      popupText.innerText = "Checking passwords...";
+    }, 3000);
+    setTimeout(() => {
+      popupText.innerText = "Finishing...";
+    }, 6000);
+    setTimeout(() => {
+      popupText.innerText = "you have been hacked by the xyslsinahs07";
+    }, 9000);
+
+    // Auto-close popup
+    setTimeout(() => {
+      popup.style.display = "none";
+      document.getElementById("flashing").style.display = "none";
+      running = true;
+      toggleBtn.textContent = "⏸️";
+    }, 30000);
+  });
 
   spinCat();
   moveCat();
