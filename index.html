@@ -11,16 +11,20 @@
       width: 100vw;
       overflow: hidden;
       background: black;
+      font-family: sans-serif;
     }
 
     #cat {
       width: 150px;
       height: 150px;
-      background-size: cover;
+      background-size: contain;
+      background-repeat: no-repeat;
       background-position: center;
       position: absolute;
-      cursor: pointer;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%);
+      cursor: pointer;
     }
 
     #toggle-btn {
@@ -42,6 +46,35 @@
       box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
     }
 
+    #popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      display: none;
+      z-index: 999;
+    }
+
+    #popup h2 {
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    #hello-btn {
+      background: dodgerblue;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
     canvas {
       position: fixed;
       top: 0;
@@ -55,28 +88,35 @@
 
 <div id="cat"></div>
 <button id="toggle-btn">⏸️</button>
+<div id="popup">
+  <h2>hi zeridaddy</h2>
+  <button id="hello-btn">hello</button>
+</div>
 <canvas id="confettiCanvas"></canvas>
 
 <script>
   const cat = document.getElementById("cat");
   const toggleBtn = document.getElementById("toggle-btn");
+  const popup = document.getElementById("popup");
+  const helloBtn = document.getElementById("hello-btn");
 
   const frames = ["cat-front.png", "cat-right.png", "cat-back.png", "cat-left.png"];
   let frameIndex = 0;
   let x = window.innerWidth / 2;
   let y = window.innerHeight / 2;
-  let vx = Math.random() * 20 + 10;
-  let vy = Math.random() * 20 + 10;
+  let vx = (Math.random() - 0.5) * 25;
+  let vy = (Math.random() - 0.5) * 25;
   let angle = 0;
   let tilt = 0;
   let running = true;
+  let pausedByPopup = false;
 
   function spinCat() {
     if (running) {
       cat.style.backgroundImage = `url('${frames[frameIndex]}')`;
       frameIndex = (frameIndex + 1) % frames.length;
     }
-    setTimeout(spinCat, 80); // Adjust for speed
+    setTimeout(spinCat, 100);
   }
 
   function moveCat() {
@@ -101,9 +141,22 @@
     toggleBtn.textContent = running ? "⏸️" : "▶️";
   });
 
-  cat.addEventListener("click", showConfetti);
+  cat.addEventListener("click", () => {
+    pausedByPopup = true;
+    running = false;
+    popup.style.display = "block";
+    toggleBtn.textContent = "▶️";
+  });
 
-  function showConfetti() {
+  helloBtn.addEventListener("click", () => {
+    popup.style.display = "none";
+    pausedByPopup = false;
+    running = true;
+    toggleBtn.textContent = "⏸️";
+    launchConfetti();
+  });
+
+  function launchConfetti() {
     const duration = 1000;
     const end = Date.now() + duration;
     const defaults = { spread: 360, ticks: 60, zIndex: 999 };
@@ -120,7 +173,6 @@
   spinCat();
   moveCat();
 
-  // Load confetti
   (function() {
     const script = document.createElement("script");
     script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js";
