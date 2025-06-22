@@ -52,6 +52,36 @@
     #popup button:hover {
       background-color: #000;
     }
+
+    #controls {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index: 1000;
+    }
+
+    #controls button {
+      margin-left: 5px;
+      padding: 8px 12px;
+      font-size: 14px;
+      background: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #controls button:hover {
+      background: lightgray;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 998;
+    }
   </style>
 </head>
 <body>
@@ -64,21 +94,23 @@
   <button onclick="closePopup()">close</button>
 </div>
 
+<div id="controls">
+  <button onclick="pauseMovement()">Pause</button>
+  <button onclick="resumeMovement()">Play</button>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+
 <script>
   const cat = document.getElementById("cat");
-  const frames = [
-    "cat-front.png",
-    "cat-right.png",
-    "cat-back.png",
-    "cat-left.png"
-  ];
-
+  const frames = ["cat-front.png", "cat-right.png", "cat-back.png", "cat-left.png"];
   let index = 0;
   let x = window.innerWidth / 2;
   let y = window.innerHeight / 2;
-  let vx = Math.random() * 4 + 2; // random speed x
-  let vy = Math.random() * 4 + 2; // random speed y
+  let vx = Math.random() * 4 + 2;
+  let vy = Math.random() * 4 + 2;
   let angle = 0;
+  let moving = true;
 
   function spinCat() {
     cat.style.backgroundImage = `url('${frames[index]}')`;
@@ -87,19 +119,27 @@
   }
 
   function moveCat() {
-    x += vx;
-    y += vy;
-    angle += Math.random() * 20 - 10; // random tilt for wobble
+    if (moving) {
+      x += vx;
+      y += vy;
+      angle += Math.random() * 20 - 10;
 
-    // bounce off edges
-    if (x <= 0 || x >= window.innerWidth - 250) vx *= -1;
-    if (y <= 0 || y >= window.innerHeight - 250) vy *= -1;
+      if (x <= 0 || x >= window.innerWidth - 250) vx *= -1;
+      if (y <= 0 || y >= window.innerHeight - 250) vy *= -1;
 
-    cat.style.left = `${x}px`;
-    cat.style.top = `${y}px`;
-    cat.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
-
+      cat.style.left = `${x}px`;
+      cat.style.top = `${y}px`;
+      cat.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+    }
     requestAnimationFrame(moveCat);
+  }
+
+  function pauseMovement() {
+    moving = false;
+  }
+
+  function resumeMovement() {
+    moving = true;
   }
 
   function showPopup() {
@@ -113,6 +153,54 @@
   function agree() {
     alert("you agreed, zeridaddy 😼");
     closePopup();
+    launchConfetti();
+  }
+
+  // 🎉 Confetti Logic
+  const canvas = document.getElementById("confettiCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const confetti = [];
+
+  function launchConfetti() {
+    for (let i = 0; i < 200; i++) {
+      confetti.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - 200,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 10 + 10,
+        color: `hsl(${Math.random() * 360}, 100%, 70%)`,
+        tilt: Math.random() * 10 - 5,
+        tiltAngleIncremental: Math.random() * 0.07 + 0.05,
+        tiltAngle: 0
+      });
+    }
+
+    animateConfetti();
+    setTimeout(() => confetti.length = 0, 3000);
+  }
+
+  function animateConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = 0; i < confetti.length; i++) {
+      const c = confetti[i];
+      c.tiltAngle += c.tiltAngleIncremental;
+      c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2;
+      c.x += Math.sin(c.d);
+      c.tilt = Math.sin(c.tiltAngle - i / 3) * 15;
+
+      ctx.beginPath();
+      ctx.lineWidth = c.r;
+      ctx.strokeStyle = c.color;
+      ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
+      ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 2);
+      ctx.stroke();
+    }
+
+    if (confetti.length > 0) requestAnimationFrame(animateConfetti);
   }
 
   spinCat();
