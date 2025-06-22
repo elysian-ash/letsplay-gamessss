@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Spinning Flying Cat</title>
+  <meta charset="UTF-8" />
+  <title>Crazy Spinning Cat</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: black;
       height: 100vh;
       width: 100vw;
       overflow: hidden;
+      background: black;
     }
 
     #cat {
@@ -19,10 +19,8 @@
       background-size: cover;
       background-position: center;
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       cursor: pointer;
+      transform: translate(-50%, -50%);
     }
 
     #popup {
@@ -49,10 +47,6 @@
       cursor: pointer;
     }
 
-    #popup button:hover {
-      background-color: #000;
-    }
-
     #controls {
       position: fixed;
       bottom: 10px;
@@ -69,10 +63,6 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
-    }
-
-    #controls button:hover {
-      background: lightgray;
     }
 
     canvas {
@@ -104,25 +94,28 @@
 <script>
   const cat = document.getElementById("cat");
   const frames = ["cat-front.png", "cat-right.png", "cat-back.png", "cat-left.png"];
-  let index = 0;
+  let frameIndex = 0;
   let x = window.innerWidth / 2;
   let y = window.innerHeight / 2;
-  let vx = Math.random() * 4 + 2;
-  let vy = Math.random() * 4 + 2;
+  let vx = Math.random() * 20 + 10; // big bounces
+  let vy = Math.random() * 20 + 10;
   let angle = 0;
+  let rotationSpeed = 30;
   let moving = true;
 
   function spinCat() {
-    cat.style.backgroundImage = `url('${frames[index]}')`;
-    index = (index + 1) % frames.length;
-    setTimeout(spinCat, 45);
+    if (moving) {
+      cat.style.backgroundImage = `url('${frames[frameIndex]}')`;
+      frameIndex = (frameIndex + 1) % frames.length;
+    }
+    setTimeout(spinCat, 30); // fast illusion
   }
 
   function moveCat() {
     if (moving) {
       x += vx;
       y += vy;
-      angle += Math.random() * 20 - 10;
+      angle += Math.random() * 40 - 20;
 
       if (x <= 0 || x >= window.innerWidth - 250) vx *= -1;
       if (y <= 0 || y >= window.innerHeight - 250) vy *= -1;
@@ -131,6 +124,7 @@
       cat.style.top = `${y}px`;
       cat.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
     }
+
     requestAnimationFrame(moveCat);
   }
 
@@ -151,7 +145,6 @@
   }
 
   function agree() {
-    alert("you agreed, zeridaddy 😼");
     closePopup();
     launchConfetti();
   }
