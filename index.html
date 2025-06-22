@@ -77,7 +77,7 @@
   function spinCat() {
     cat.style.backgroundImage = `url('${frames[index]}')`;
     index = (index + 1) % frames.length;
-    requestAnimationFrame(spinCat);
+    setTimeout(spinCat, 70); // ~14 frames per second — visible but fast
   }
 
   spinCat();
