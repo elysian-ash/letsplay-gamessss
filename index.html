@@ -15,8 +15,8 @@
     }
 
     #cat {
-      width: 150px;
-      height: 150px;
+      width: 300px;
+      height: 300px;
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
@@ -122,10 +122,10 @@
     if (running) {
       x += vx;
       y += vy;
-      angle += Math.random() * 30 - 15;
+      angle += Math.random() * 10 - 5;
 
-      if (x <= 0 || x >= window.innerWidth - 150) vx *= -1;
-      if (y <= 0 || y >= window.innerHeight - 150) vy *= -1;
+      if (x <= 0 || x >= window.innerWidth - 300) vx *= -1;
+      if (y <= 0 || y >= window.innerHeight - 300) vy *= -1;
 
       cat.style.left = `${x}px`;
       cat.style.top = `${y}px`;
